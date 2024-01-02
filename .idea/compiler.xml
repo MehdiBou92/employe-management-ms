@@ -9,8 +9,8 @@
         <outputRelativeToContentRoot value="true" />
         <module name="Discovery" />
         <module name="Leave" />
-        <module name="Employe" />
         <module name="department" />
+        <module name="Employe" />
         <module name="Gateway" />
       </profile>
     </annotationProcessing>

@@ -49,15 +49,26 @@ public class EmployeServiceImpl implements EmployeService {
                 .filter(leaveResponse -> leaveResponse.getEmployeId().equals(employe.getId()))
                 .forEach(leaveResponse -> employe.getConges().add(leaveResponse));
 
-       Optional<LeaveResponse> lastLeave = employe.getConges().stream().max(Comparator.comparing(LeaveResponse::getStartLeave).reversed());
+//            Optional<LeaveResponse>  lastLeave = Optional.ofNullable(employe.getConges().get(employe.getConges().size() - 1));
 
-        lastLeave.ifPresent(leaveResponse -> employe.setLeaveCredit(leaveResponse.getCreditLeave()));
+            // update the lastLeave :
+//            employe.setLeaveCredit(lastLeave.getCreditLeave());
+
 
         return mapToEmployeDto(employe);
     }
 
     public List<EmployeResponse> findAllEmployees() {
         List<Employe> employes = employeRepository.findAll();
+        List<LeaveResponse> leaves = leaveRestClient.leaves();
+        for(Employe e : employes){
+            for(LeaveResponse l : leaves){
+                if(e.getId().equals(l.getEmployeId())){
+                    e.getConges().add(l);
+                }
+            }
+        }
+
         return employes.stream()
                 .map(this::mapToEmployeDto)
                 .toList();

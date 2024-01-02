@@ -40,13 +40,10 @@ public class LeaveServiceImpl implements LeaveService {
                 + leaveRequest.getVacationLeave();
         if(employe.getLeaveCredit() > requestedLeave){
 
-        // Retreive the last Leave :
-        List<Leave> leaves = leaveRepository.findAll();
-            Optional<Leave> lastLeave = leaves.stream()
+        //Retreive last Leave :
+            List<Leave> leaves = leaveRepository.findAll();
+           Optional<Leave> lastLeave =  leaves.stream()
                     .max(Comparator.comparing(Leave::getStartLeave));
-         if(!lastLeave.isPresent()){
-             lastLeave.get().setCreditLeave(employe.getLeaveCredit());
-         }
 
             // New Leave :
        Leave leave = Leave.builder()
@@ -57,10 +54,15 @@ public class LeaveServiceImpl implements LeaveService {
                     .duration(leaveRequest.getDuration())
                     .vacationLeave(leaveRequest.getVacationLeave())
                     .employeId(leaveRequest.getEmployeId())
-                    .creditLeave(lastLeave.get().getCreditLeave())
                     .build();
 
-       // Updating Credit Leave :
+       if(employe.getLeaves().isEmpty()){
+            leave.setCreditLeave(employe.getLeaveCredit());
+            } else {
+           leave.setCreditLeave(lastLeave.get().getCreditLeave());
+       }
+
+            // Updating Credit Leave :
        leave.setCreditLeave(leave.getCreditLeave() - requestedLeave);
         leaveRepository.save(leave);
 
