@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/Employe/Employe.iml" filepath="$PROJECT_DIR$/Employe/Employe.iml" />
       <module fileurl="file://$PROJECT_DIR$/Gateway/Gateway.iml" filepath="$PROJECT_DIR$/Gateway/Gateway.iml" />
       <module fileurl="file://$PROJECT_DIR$/Leave/Leave.iml" filepath="$PROJECT_DIR$/Leave/Leave.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Loan/Loan.iml" filepath="$PROJECT_DIR$/Loan/Loan.iml" />
       <module fileurl="file://$PROJECT_DIR$/department/department.iml" filepath="$PROJECT_DIR$/department/department.iml" />
     </modules>
   </component>

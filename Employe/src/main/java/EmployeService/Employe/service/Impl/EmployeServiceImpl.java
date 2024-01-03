@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class EmployeServiceImpl implements EmployeService {
@@ -33,6 +32,7 @@ public class EmployeServiceImpl implements EmployeService {
                 .cin(employeRequest.getCin())
                 .name(employeRequest.getName())
                 .departmentId(employeRequest.getDepartmentId())
+                .hiringDate(employeRequest.getHiringDate())
                 .build();
         employeRepository.save(employe);
     }
@@ -42,21 +42,24 @@ public class EmployeServiceImpl implements EmployeService {
         Employe employe = employeRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
 
-            // Find Leaves :
-            List<LeaveResponse> leaves = leaveRestClient.leaves();
+        // Find Leaves :
+        List<LeaveResponse> leaves = leaveRestClient.leaves();
 
-        leaves.stream()
-                .filter(leaveResponse -> leaveResponse.getEmployeId().equals(employe.getId()))
-                .forEach(leaveResponse -> employe.getConges().add(leaveResponse));
 
-//            Optional<LeaveResponse>  lastLeave = Optional.ofNullable(employe.getConges().get(employe.getConges().size() - 1));
+            leaves.stream()
+                    .filter(leaveResponse -> leaveResponse.getEmployeId().equals(employe.getId()))
+                    .forEach(leaveResponse -> employe.getConges().add(leaveResponse));
 
-            // update the lastLeave :
-//            employe.setLeaveCredit(lastLeave.getCreditLeave());
-
+            // Get Employe Last Leave  & Update Employee
+        if(!employe.getConges().isEmpty()){
+            Optional<LeaveResponse> lastLeave = employe.getConges().stream()
+                    .max(Comparator.comparing(LeaveResponse::getId));
+            employe.setLeaveCredit(lastLeave.get().getCreditLeave());
+        }
 
         return mapToEmployeDto(employe);
     }
+
 
     public List<EmployeResponse> findAllEmployees() {
         List<Employe> employes = employeRepository.findAll();
@@ -65,6 +68,8 @@ public class EmployeServiceImpl implements EmployeService {
             for(LeaveResponse l : leaves){
                 if(e.getId().equals(l.getEmployeId())){
                     e.getConges().add(l);
+                    e.getConges().sort(Comparator.comparing(LeaveResponse::getId).reversed());
+                    e.setLeaveCredit(e.getConges().get(0).getCreditLeave());
                 }
             }
         }
@@ -80,6 +85,8 @@ public class EmployeServiceImpl implements EmployeService {
                 .cin(employe.getCin())
                 .leaves(employe.getConges())
                 .leaveCredit(employe.getLeaveCredit())
+                .hiringDate(employe.getHiringDate())
+                .seniority(employe.getSeniority())
                 .departmentId(employe.getDepartmentId())
                 .build();
     }

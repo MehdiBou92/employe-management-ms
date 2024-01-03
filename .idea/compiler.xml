@@ -11,6 +11,7 @@
         <module name="Leave" />
         <module name="department" />
         <module name="Employe" />
+        <module name="Loan" />
         <module name="Gateway" />
       </profile>
     </annotationProcessing>
@@ -20,6 +21,7 @@
       <module name="Employe" target="17" />
       <module name="Gateway" target="17" />
       <module name="Leave" target="17" />
+      <module name="Loan" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
@@ -28,6 +30,7 @@
       <module name="Employe" options="-parameters" />
       <module name="Gateway" options="-parameters" />
       <module name="Leave" options="-parameters" />
+      <module name="Loan" options="-parameters" />
       <module name="department" options="-parameters" />
     </option>
   </component>

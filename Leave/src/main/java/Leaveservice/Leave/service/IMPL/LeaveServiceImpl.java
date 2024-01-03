@@ -26,7 +26,7 @@ public class LeaveServiceImpl implements LeaveService {
         this.employeRestClient = employeRestClient;
     }
 
-//    @Transactional
+    @Transactional
     public void addLeave(Long employeId, LeaveRequest leaveRequest) {
 
         // Get the Employe for FeingClient :
@@ -40,11 +40,6 @@ public class LeaveServiceImpl implements LeaveService {
                 + leaveRequest.getVacationLeave();
         if(employe.getLeaveCredit() > requestedLeave){
 
-        //Retreive last Leave :
-            List<Leave> leaves = leaveRepository.findAll();
-           Optional<Leave> lastLeave =  leaves.stream()
-                    .max(Comparator.comparing(Leave::getStartLeave));
-
             // New Leave :
        Leave leave = Leave.builder()
                     .maternityLeave(leaveRequest.getMaternityLeave())
@@ -56,20 +51,58 @@ public class LeaveServiceImpl implements LeaveService {
                     .employeId(leaveRequest.getEmployeId())
                     .build();
 
-       if(employe.getLeaves().isEmpty()){
-            leave.setCreditLeave(employe.getLeaveCredit());
-            } else {
-           leave.setCreditLeave(lastLeave.get().getCreditLeave());
-       }
 
-            // Updating Credit Leave :
-       leave.setCreditLeave(leave.getCreditLeave() - requestedLeave);
+      if(employe.getLeaves().isEmpty()){
+          leave.setCreditLeave(employe.getLeaveCredit() - requestedLeave);
+      } else {
+
+          // Find last Leave :
+          Optional<LeaveResponse> lastLeave = findLastLeaveByEmployeId(employe.getId());
+          leave.setCreditLeave(lastLeave.get().getCreditLeave()- requestedLeave);
+      }
+
+
         leaveRepository.save(leave);
 
         } else {
             throw new IllegalArgumentException("Not Ennough Leave Credit ! ");
         }
     }
+
+
+    // Calculate the supplement depending on seniority :
+    public float calculateSupplmentBasedOnSeniority(float seniority){
+
+        float supplement = 0;
+        if(seniority< 5){
+            supplement += 1.5;
+        } else if (seniority >= 5 && seniority <= 10){
+            supplement += 2;
+        } else {
+            supplement += 2.5;
+        }
+        return  supplement;
+    }
+
+    // For Each Employee :
+    //Take the creditLeave of last Leave and add supplement
+   @Transactional
+   public void updateMonthlyLeave (){
+        // Retreive All Employees :
+       List<EmployeResponse> employeResponses = employeRestClient.getAllEmployees();
+
+       for(EmployeResponse employeResponse : employeResponses){
+
+           // Calculate the supplement
+           float supplement = calculateSupplmentBasedOnSeniority(employeResponse.getSeniority());
+
+
+           // Creating new Leave :
+           Leave leave = new Leave();
+           leave.setCreditLeave(employeResponse.getLeaveCredit() + supplement);
+
+       }
+   }
 
     public List<LeaveResponse> leaves() {
         // Get Leaves :
@@ -78,6 +111,15 @@ public class LeaveServiceImpl implements LeaveService {
         return leaves.stream()
                 .map(this::mapToLeaveResponse)
                 .toList();
+    }
+
+
+    public Optional<LeaveResponse> findLastLeaveByEmployeId(Long id) {
+        EmployeResponse employeResponse = employeRestClient.getEmployeById(id);
+        Optional<Leave> lastLeave = employeResponse.getLeaves().stream()
+                .max(Comparator.comparing(Leave::getId));
+        LeaveResponse lastLeaveResponse = mapToLeaveResponse(lastLeave.get());
+        return Optional.ofNullable(lastLeaveResponse);
     }
 
     private LeaveResponse mapToLeaveResponse(Leave leave) {
@@ -90,6 +132,19 @@ public class LeaveServiceImpl implements LeaveService {
                 .vacationLeave(leave.getVacationLeave())
                 .creditLeave(leave.getCreditLeave())
                 .employeId(leave.getEmployeId())
+                .build();
+    }
+
+    private Leave mapToLeave(LeaveResponse leaveResponse) {
+        return Leave.builder()
+                .id(leaveResponse.getId())
+                .maternityLeave(leaveResponse.getMaternityLeave())
+                .sickLeave(leaveResponse.getSickLeave())
+                .startLeave(leaveResponse.getStartLeave())
+                .unjustifiedLeave(leaveResponse.getUnjustifiedLeave())
+                .vacationLeave(leaveResponse.getVacationLeave())
+                .creditLeave(leaveResponse.getCreditLeave())
+                .employeId(leaveResponse.getEmployeId())
                 .build();
     }
 }

@@ -8,6 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 
+import java.time.LocalDate;
+
 @SpringBootApplication
 @EnableFeignClients
 public class EmployeApplication {
@@ -24,6 +26,7 @@ public class EmployeApplication {
 					.cin("A5T")
 					.leaveCredit(15F)
 					.departmentId(1L)
+					.hiringDate(LocalDate.of(2022,07,07))
 					.build();
 			employeRepository.save(employe);
 
@@ -32,6 +35,7 @@ public class EmployeApplication {
 					.cin("AAAA45")
 					.departmentId(2L)
 					.leaveCredit(10f)
+					.hiringDate(LocalDate.of(2015,05,01))
 					.build();
 			employeRepository.save(employe2);
 
@@ -40,6 +44,7 @@ public class EmployeApplication {
 					.cin("A5T")
 					.departmentId(1L)
 					.leaveCredit(10f)
+					.hiringDate(LocalDate.of(2020,10,01))
 					.build();
 			employeRepository.save(employe3);
 		};

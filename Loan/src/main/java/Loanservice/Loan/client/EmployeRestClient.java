@@ -1,22 +1,14 @@
-package Leaveservice.Leave.client;
+package Loanservice.Loan.client;
 
-import Leaveservice.Leave.dto.EmployeResponse;
-import jakarta.ws.rs.Path;
+import Loanservice.Loan.dto.EmployeResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import java.util.List;
 
 @FeignClient(name = "employe-service")
 public interface EmployeRestClient {
+
     @GetMapping("/api/employe/{employeId}")
     EmployeResponse getEmployeById(@PathVariable Long employeId);
-
-    @GetMapping("/api/employe/all")
-    List<EmployeResponse> getAllEmployees();
-
 
 }

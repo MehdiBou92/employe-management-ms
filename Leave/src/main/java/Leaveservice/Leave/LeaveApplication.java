@@ -25,12 +25,14 @@ public class LeaveApplication {
 					.sickLeave(2f)
 					.startLeave(LocalDate.of(2022,05,07))
 					.employeId(1L)
+					.creditLeave(13f)
 					.build();
 
 			Leave leave2 = Leave.builder()
 					.unjustifiedLeave(3f)
 					.startLeave(LocalDate.of(2023,05,07))
 					.employeId(1L)
+					.creditLeave(10f)
 					.build();
 
 			Leave leave3 = Leave.builder()
@@ -38,9 +40,9 @@ public class LeaveApplication {
 					.startLeave(LocalDate.of(2022,05,10))
 					.employeId(2L)
 					.build();
-			leaveRepository.save(leave);
-			leaveRepository.save(leave2);
-			leaveRepository.save(leave3);
+//			leaveRepository.save(leave);
+//			leaveRepository.save(leave2);
+//			leaveRepository.save(leave3);
 
 		};
 	}
