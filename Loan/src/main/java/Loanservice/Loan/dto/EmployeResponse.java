@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,10 +14,11 @@ import java.util.List;
 @Data
 @Builder
 public class EmployeResponse {
-
     private Long id;
     private String name;
     private String cin;
     private Long departmentId;
-    private Float leaveCredit;
+    private LocalDate hiringDate;
+    private float seniority;
+    private List<LoanResponse> loans = new ArrayList<>();
 }

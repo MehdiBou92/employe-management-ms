@@ -26,5 +26,6 @@ public class EmployeResponse {
     private float seniority;
     private Float leaveCredit;
     private List<LeaveResponse> leaves = new ArrayList<>();
+    private List<LoanResponse> loans = new ArrayList<>();
 
 }

@@ -10,6 +10,8 @@ public interface EmployeService {
 
     void addEmploye (EmployeRequest employeRequest);
 
+    EmployeResponse findEmployeByIdWithLeave(Long id);
+    EmployeResponse findEmployeByIdWithLoans(Long id);
     EmployeResponse findEmployeById(Long id);
 
     List<EmployeResponse> findAllEmployees ();

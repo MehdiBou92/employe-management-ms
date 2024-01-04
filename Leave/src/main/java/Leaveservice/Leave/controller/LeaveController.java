@@ -35,7 +35,7 @@ public class LeaveController {
     }
 
     @GetMapping("/last/{id}")
-    public ResponseEntity<Optional<LeaveResponse>> getLastLeave (@PathVariable Long id){
+    public ResponseEntity<LeaveResponse> getLastLeave (@PathVariable Long id){
         return ResponseEntity.ok(leaveService.findLastLeaveByEmployeId(id));
     }
 }

@@ -34,7 +34,7 @@ public class Employe {
     private List<LeaveResponse> conges = new ArrayList<>() ;
     private Long departmentId;
     @Transient
-    private List<LoanResponse> loans;
+    private List<LoanResponse> loans = new ArrayList<>();
 
 
 

@@ -13,14 +13,14 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 public class LoanResponse {
-
     private Long id;
-    private Integer amount;
-    private float rate;
-    private Integer interest;
-    private Integer duration;
-    private Integer monthlyPayment;
+    private Float amount;
+    private Float rate;
+    private Float interest;
+    private Long duration;
+    private Float monthlyPayment;
     private LocalDate startLoanDate;
     private LocalDate endLoanDate;
-
+    private Long employeId;
+    private boolean statut;
 }

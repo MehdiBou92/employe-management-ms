@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class LoanRequest {
-
-    private Integer amount;
-    private Integer duration;
+    private Float amount;
+    private Long duration;
+    private Long employeId;
 }

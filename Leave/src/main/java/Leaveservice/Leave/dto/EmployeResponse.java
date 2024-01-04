@@ -26,12 +26,4 @@ public class EmployeResponse {
     private float seniority;
     private Float leaveCredit;
     private List<Leave> leaves = new ArrayList<>();
-
-
-    @PrePersist
-    @PreUpdate
-    public void calculateSeniority () {
-        Period calculSeniority = Period.between(hiringDate,LocalDate.now());
-        this.setSeniority(calculSeniority.getYears());
-    }
 }

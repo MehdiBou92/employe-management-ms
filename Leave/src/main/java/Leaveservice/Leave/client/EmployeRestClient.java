@@ -12,8 +12,8 @@ import java.util.List;
 
 @FeignClient(name = "employe-service")
 public interface EmployeRestClient {
-    @GetMapping("/api/employe/{employeId}")
-    EmployeResponse getEmployeById(@PathVariable Long employeId);
+    @GetMapping("/api/employe/{employeId}/leaves")
+    EmployeResponse getEmployeByIdWithLeaves(@PathVariable Long employeId);
 
     @GetMapping("/api/employe/all")
     List<EmployeResponse> getAllEmployees();

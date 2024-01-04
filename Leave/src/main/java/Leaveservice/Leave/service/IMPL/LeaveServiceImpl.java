@@ -7,6 +7,7 @@ import Leaveservice.Leave.dto.LeaveResponse;
 import Leaveservice.Leave.entities.Leave;
 import Leaveservice.Leave.repository.LeaveRepository;
 import Leaveservice.Leave.service.LeaveService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class LeaveServiceImpl implements LeaveService {
 
     private final LeaveRepository leaveRepository;
@@ -30,8 +32,9 @@ public class LeaveServiceImpl implements LeaveService {
     public void addLeave(Long employeId, LeaveRequest leaveRequest) {
 
         // Get the Employe for FeingClient :
-        EmployeResponse employe = employeRestClient.getEmployeById(employeId);
+        EmployeResponse employe = employeRestClient.getEmployeByIdWithLeaves(employeId);
         String emp = employe.getName();
+        log.info(String.valueOf(employe.getLeaves().size()));
 
         // Check if the employee has ennough leave Credit :
         float requestedLeave = leaveRequest.getMaternityLeave()
@@ -39,6 +42,7 @@ public class LeaveServiceImpl implements LeaveService {
                 + leaveRequest.getUnjustifiedLeave()
                 + leaveRequest.getVacationLeave();
         if(employe.getLeaveCredit() > requestedLeave){
+
 
             // New Leave :
        Leave leave = Leave.builder()
@@ -52,15 +56,14 @@ public class LeaveServiceImpl implements LeaveService {
                     .build();
 
 
-      if(employe.getLeaves().isEmpty()){
-          leave.setCreditLeave(employe.getLeaveCredit() - requestedLeave);
-      } else {
 
+      if(!employe.getLeaves().isEmpty()){
           // Find last Leave :
-          Optional<LeaveResponse> lastLeave = findLastLeaveByEmployeId(employe.getId());
-          leave.setCreditLeave(lastLeave.get().getCreditLeave()- requestedLeave);
+          LeaveResponse lastLeave = findLastLeaveByEmployeId(employe.getId());
+          leave.setCreditLeave(lastLeave.getCreditLeave()- requestedLeave);
+      } else {
+          leave.setCreditLeave(employe.getLeaveCredit() - requestedLeave);
       }
-
 
         leaveRepository.save(leave);
 
@@ -84,8 +87,7 @@ public class LeaveServiceImpl implements LeaveService {
         return  supplement;
     }
 
-    // For Each Employee :
-    //Take the creditLeave of last Leave and add supplement
+
    @Transactional
    public void updateMonthlyLeave (){
         // Retreive All Employees :
@@ -114,12 +116,11 @@ public class LeaveServiceImpl implements LeaveService {
     }
 
 
-    public Optional<LeaveResponse> findLastLeaveByEmployeId(Long id) {
-        EmployeResponse employeResponse = employeRestClient.getEmployeById(id);
+    public LeaveResponse findLastLeaveByEmployeId(Long id) {
+        EmployeResponse employeResponse = employeRestClient.getEmployeByIdWithLeaves(id);
         Optional<Leave> lastLeave = employeResponse.getLeaves().stream()
                 .max(Comparator.comparing(Leave::getId));
-        LeaveResponse lastLeaveResponse = mapToLeaveResponse(lastLeave.get());
-        return Optional.ofNullable(lastLeaveResponse);
+        return mapToLeaveResponse(lastLeave.get());
     }
 
     private LeaveResponse mapToLeaveResponse(Leave leave) {

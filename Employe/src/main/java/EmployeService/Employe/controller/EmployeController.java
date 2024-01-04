@@ -30,6 +30,18 @@ public class EmployeController {
         return ResponseEntity.ok(employeResponse);
     }
 
+    @GetMapping("/{id}/leaves")
+    public ResponseEntity<EmployeResponse> findEmployeByIdWithLeaves (@PathVariable Long id){
+        EmployeResponse employeResponse = employeService.findEmployeByIdWithLeave(id);
+        return ResponseEntity.ok(employeResponse);
+    }
+
+    @GetMapping("/{id}/loans")
+    public ResponseEntity<EmployeResponse> findEmployeByIdWithLoans (@PathVariable Long id){
+        EmployeResponse employeResponse = employeService.findEmployeByIdWithLoans(id);
+        return ResponseEntity.ok(employeResponse);
+    }
+
     @GetMapping("/all")
     public ResponseEntity<List<EmployeResponse>> findAllEmployees (){
         return ResponseEntity.ok(employeService.findAllEmployees());
